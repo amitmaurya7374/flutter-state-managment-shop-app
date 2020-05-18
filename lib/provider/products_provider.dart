@@ -44,8 +44,17 @@ class Products with ChangeNotifier {
     ),
   ];
 
-  List<Product> get items{ //using getter to get a value of private _items list
-  return [..._items]; //returning the copy of private variable
+  List<Product> get items {
+    //using getter to get a value of private _items list
+    return [..._items]; //returning the copy of private variable
   }
 
+  Product findById(String id) {
+    return _items.firstWhere((prod) => prod.id == id);
+  }
+
+  void addProduct() {
+    // _items.add(value);
+    notifyListeners();
+  }
 }

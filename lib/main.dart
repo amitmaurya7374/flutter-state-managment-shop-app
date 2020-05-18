@@ -8,19 +8,19 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(//here i register the Provider
-          create: (context)=>Products(), //create Take a function which should return a instacne of your provided class
-          child: MaterialApp(
-        title: 'MyShop',
-        theme: ThemeData(
-          primarySwatch: Colors.deepPurple,
-          accentColor: Colors.deepOrange
-        ),
-        home: ProductOverViewScreen(),
-        routes: {
-          ProductDetailScreen.routeName:(context)=>ProductOverViewScreen(),
-        },
-      ),
+    return ChangeNotifierProvider(
+      create: (ctx) => Products(),
+      child: MaterialApp(
+          title: 'MyShop',
+          theme: ThemeData(
+            primarySwatch: Colors.purple,
+            accentColor: Colors.deepOrange,
+            fontFamily: 'Lato',
+          ),
+          home: ProductsOverviewScreen(),
+          routes: {
+            ProductDetailScreen.routeName: (ctx) => ProductDetailScreen(),
+          }),
     );
   }
 }

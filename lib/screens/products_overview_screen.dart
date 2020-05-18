@@ -2,15 +2,14 @@
 import 'package:flutter/material.dart';
 import 'package:shop_state/widget/product_grid.dart';
 
-class ProductOverViewScreen extends StatelessWidget {
-  
+class ProductsOverviewScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Myshopex'),
+        title: Text('MyShop'),
       ),
-      body: ProductGrid(),
+      body: ProductsGrid(),
     );
   }
 }
