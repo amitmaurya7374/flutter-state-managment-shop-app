@@ -8,8 +8,8 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (ctx) => Products(),
+    return ChangeNotifierProvider(//here i register the Provider at the heighesty level
+      create: (ctx) => Products(),//here i created the instance of data class 
       child: MaterialApp(
           title: 'MyShop',
           theme: ThemeData(

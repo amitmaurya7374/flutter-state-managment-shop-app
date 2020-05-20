@@ -11,10 +11,10 @@ class ProductDetailScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final productId =
-        ModalRoute.of(context).settings.arguments as String; // is the id!
+        ModalRoute.of(context).settings.arguments as String; // here i get the data from Navigator and save in productId =>this is only id 
     final loadedProduct = Provider.of<Products>(
       context,
-      listen: false,
+      listen: false, //listen flase means i donot have intension to change ui after the app run first time
     ).findById(productId);
     return Scaffold(
       appBar: AppBar(

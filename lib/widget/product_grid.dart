@@ -9,21 +9,25 @@ import 'products_item.dart';
   
   @override
   Widget build(BuildContext context) {
-    final productsData = Provider.of<Products>(context);
+    final productsData = Provider.of<Products>(context); //here i am providing the listener for any data change
     final products = productsData.items;
-    return GridView.builder(
-      padding: const EdgeInsets.all(10.0),
-      itemCount: products.length,
-      itemBuilder: (ctx, i) => ProductItem(
-            products[i].id,
-            products[i].title,
-            products[i].imageUrl,
-          ),
-      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        childAspectRatio: 3 / 2,
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
+    return Card( //i added the card widget and every thing work properly
+      elevation: 6.0,
+        // shadowColor: Colors.pink,      
+          child: GridView.builder(
+        padding: const EdgeInsets.all(10.0),
+        itemCount: products.length,
+        itemBuilder: (ctx, i) => ProductItem(
+              products[i].id,
+              products[i].title,
+              products[i].imageUrl,
+            ),
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          childAspectRatio: 3 / 2,
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+        ),
       ),
     );
   }
