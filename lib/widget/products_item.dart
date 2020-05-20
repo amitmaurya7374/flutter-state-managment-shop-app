@@ -16,7 +16,7 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context); //setting up listener
+    final product = Provider.of<Product>(context,listen: false); //setting up listener
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
