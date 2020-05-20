@@ -11,6 +11,7 @@ class MyApp extends StatelessWidget {
     return ChangeNotifierProvider(//here i register the Provider at the heighesty level
       create: (ctx) => Products(),//here i created the instance of data class 
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
           title: 'MyShop',
           theme: ThemeData(
             primarySwatch: Colors.purple,
