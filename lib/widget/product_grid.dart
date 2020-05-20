@@ -17,11 +17,14 @@ import 'products_item.dart';
           child: GridView.builder(
         padding: const EdgeInsets.all(10.0),
         itemCount: products.length,
-        itemBuilder: (ctx, i) => ProductItem(
-              products[i].id,
-              products[i].title,
-              products[i].imageUrl,
-            ),
+        itemBuilder: (ctx, i) => ChangeNotifierProvider(
+          create:(context)=> products[i], //i did this because i already initiate the single Product into Products class
+                  child: ProductItem(
+                // products[i].id,
+                // products[i].title,
+                // products[i].imageUrl,
+              ),
+        ),
         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
           childAspectRatio: 3 / 2,

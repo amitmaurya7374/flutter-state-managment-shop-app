@@ -1,7 +1,7 @@
 //this file is the data provider file  it will help you to define a data for a provider
 //this is a globle data center
 import 'package:flutter/widgets.dart';
-import '../model/product.dart';
+import 'product.dart';
 
 //this class is for multiple products with a mixin called changeNotifier
 class Products with ChangeNotifier {

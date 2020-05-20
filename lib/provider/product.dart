@@ -2,7 +2,7 @@
 //this will show how a product is look like
 import 'package:flutter/widgets.dart';
 
-class Product {
+class Product with ChangeNotifier{
   //creating the instance variable or member variable
   final String id;
   final String title;
@@ -19,4 +19,8 @@ class Product {
     @required this.imageUrl,
     this.isFavorite = false,
   });
+  void toggleFavoriteStatus(){
+        isFavorite = !isFavorite;
+        notifyListeners();
+  }
 }
