@@ -18,11 +18,14 @@ class CartItem {
 
 //here i create data center with the help of provider
 class Cart with ChangeNotifier {
-  Map<String, CartItem> _items; //A empty map
+  Map<String, CartItem> _items={}; //A empty map
   Map<String, CartItem> get items {
     return {..._items};
   }
-
+//here i put the logic of how manny item in the cart
+int get itemCount{
+  return _items.length;
+} 
   //now we want to add the  item in a cart
   void addItem(
     String productId,
@@ -53,5 +56,6 @@ class Cart with ChangeNotifier {
                 quantity: 1,
               ));
     }
+  notifyListeners();
   }
 }
