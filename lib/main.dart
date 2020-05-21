@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shop_state/provider/cart.dart';
 import 'package:shop_state/screens/product_detail_screen.dart';
 import 'package:shop_state/screens/products_overview_screen.dart';
 import './provider/products_provider.dart';
@@ -8,9 +9,16 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(//here i register the Provider at the heighesty level
-      create: (ctx) => Products(),//here i created the instance of data class 
-      child: MaterialApp(
+    return MultiProvider(//register the providers
+            providers: [
+              ChangeNotifierProvider(
+                create: (context)=>Products(),
+              ),
+              ChangeNotifierProvider(
+                create: (context)=>Cart(),
+              ),
+            ],
+          child: MaterialApp(
         debugShowCheckedModeBanner: false,
           title: 'MyShop',
           theme: ThemeData(
