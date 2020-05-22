@@ -67,4 +67,9 @@ int get itemCount{
     }
   notifyListeners();
   }
+  //creating the function to remove the item fromthe cart
+  void removeItem(String productId){
+    _items.remove(productId);
+    notifyListeners();
+  }
 }
