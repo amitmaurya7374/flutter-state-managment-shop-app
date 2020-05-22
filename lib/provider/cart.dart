@@ -26,6 +26,15 @@ class Cart with ChangeNotifier {
 int get itemCount{
   return _items.length;
 } 
+ //calculating the total item price in cart.
+ double get totalAmount{
+   var total =0.0;
+   _items.forEach((key, cartItem) { 
+     total = total + cartItem.price*cartItem.quantity;
+   });
+   return total;
+  //  notifyListeners();
+ }
   //now we want to add the  item in a cart
   void addItem(
     String productId,
