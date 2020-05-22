@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_state/provider/cart.dart';
-
+import 'package:shop_state/provider/cart.dart' show Cart;
+import '../widget/cartItem.dart' ;
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart-screen';
   @override
@@ -56,6 +56,23 @@ class CartScreen extends StatelessWidget {
                   ),
                 ],
               ),
+            ),
+          ),
+          SizedBox(
+            height: 10.0,
+          ),
+
+          ///as we Know ListView does work inside the column widget
+          ///so warp inside the Expanded
+          Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index) => CartItem(
+                id: cart.items.values.toList()[index].id,
+                price: cart.items.values.toList()[index].price,
+                title: cart.items.values.toList()[index].title,
+                quantity: cart.items.values.toList()[index].quantity,
+              ), //widget CartItem,
+              itemCount: cart.itemCount,
             ),
           ),
         ],
