@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_state/provider/cart.dart';
 import 'package:shop_state/screens/cart_screen.dart';
+import 'package:shop_state/widget/app_drawer.dart';
 import 'package:shop_state/widget/badge.dart';
 import 'package:shop_state/widget/product_grid.dart';
 
@@ -71,6 +72,8 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
           )
         ],
       ),
+      //here i used my AppDrawer which i built
+      drawer: AppDrawer(),
       body: ProductsGrid(_showOnlyFavorite),
     );
   }
