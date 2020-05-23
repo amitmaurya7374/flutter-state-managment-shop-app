@@ -72,4 +72,10 @@ int get itemCount{
     _items.remove(productId);
     notifyListeners();
   }
+
+  //to clear cart
+  void clearCart(){
+    _items = {};
+    notifyListeners();
+  }
 }

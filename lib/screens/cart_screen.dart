@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_state/provider/cart.dart' show Cart;
-import '../widget/cartItem.dart' ;
+import 'package:shop_state/provider/order.dart';
+import '../widget/cartItem.dart';
+
 class CartScreen extends StatelessWidget {
   static const routeName = '/cart-screen';
   @override
@@ -41,7 +43,9 @@ class CartScreen extends StatelessWidget {
                   RaisedButton(
                     elevation: 10.0,
                     onPressed: () {
-                      print('hello world');
+                      Provider.of<Orders>(context,listen: false).addOrder(
+                          cart.items.values.toList(), cart.totalAmount);
+                        cart.clearCart();  
                     },
                     child: Text(
                       'Order Now',
