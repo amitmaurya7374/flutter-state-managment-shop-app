@@ -17,8 +17,9 @@ class ProductItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = Provider.of<Product>(context,listen: false); //setting up listener
-    final cart =Provider.of<Cart>(context,listen: false);
+    final product =
+        Provider.of<Product>(context, listen: false); //setting up listener
+    final cart = Provider.of<Cart>(context, listen: false);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -38,10 +39,10 @@ class ProductItem extends StatelessWidget {
           backgroundColor: Colors.black87,
           leading: Consumer<Product>(
             ///here i a note :
-            ///whenever we use the Provider.of(context) the whole build method willrerun whenever the 
+            ///whenever we use the Provider.of(context) the whole build method willrerun whenever the
             ///data changes.
             ///But this did not happened with consumer:
-            ///we warp the subpart of widget tree into Consumer widget which is intrested in that data 
+            ///we warp the subpart of widget tree into Consumer widget which is intrested in that data
             ///changes.So that only that part of widget tree rebuild.
             ///child argument take  that widget tree whose data never changes
             builder: (context, product, _) => IconButton(
@@ -62,7 +63,23 @@ class ProductItem extends StatelessWidget {
               Icons.shopping_cart,
             ),
             onPressed: () {
-              cart.addItem(product.id, product.title, product.price);//here i used the addItem method to add product in the cart
+              cart.addItem(
+                  product.id,
+                  product.title,
+                  product
+                      .price); //here i used the addItem method to add product in the cart
+              ///Now i want to show the snackbar when user press cart icon
+              ///so to do that we have to use scaffold
+              ///this will show snackbar at bottom of the scaffold
+              ///show snackBar take the widget SnackBar()
+              ///SnackBar() take an argument content which take the widget for eg text()
+              Scaffold.of(context).showSnackBar(
+                SnackBar(
+                  elevation: 10.0,
+                  content: Text('Added item into the cart'),
+                  duration: Duration(seconds: 1),
+                ),
+              );
             },
             color: Theme.of(context).accentColor,
           ),
