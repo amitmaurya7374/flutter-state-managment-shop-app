@@ -78,6 +78,14 @@ class ProductItem extends StatelessWidget {
                   elevation: 10.0,
                   content: Text('Added item into the cart'),
                   duration: Duration(seconds: 1),
+                  //An action that user take to do thing on an snackBar
+                  action: SnackBarAction(
+                    label: 'undo',
+                    onPressed: () {
+                      //here you candefine what action  should happen when the user press the undo .
+                    
+                    },
+                  ),
                 ),
               );
             },
