@@ -73,6 +73,8 @@ class ProductItem extends StatelessWidget {
               ///this will show snackbar at bottom of the scaffold
               ///show snackBar take the widget SnackBar()
               ///SnackBar() take an argument content which take the widget for eg text()
+              Scaffold.of(context)
+                  .hideCurrentSnackBar(); //this will hide the prevous snack bar and show the latest bar .
               Scaffold.of(context).showSnackBar(
                 SnackBar(
                   elevation: 10.0,
@@ -83,7 +85,7 @@ class ProductItem extends StatelessWidget {
                     label: 'undo',
                     onPressed: () {
                       //here you candefine what action  should happen when the user press the undo .
-                    cart.removeSingleItem(product.id);
+                      cart.removeSingleItem(product.id);
                     },
                   ),
                 ),
