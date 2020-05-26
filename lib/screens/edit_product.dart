@@ -19,11 +19,20 @@ class _EditProductScreenState extends State<EditProductScreen> {
   ///to do that we have to manage it with the focusNode
   ///
   ///***************************Important Note********************************** *
-  ///here is a note when we use the Focus Node you have to dispose the focusnode * 
+  ///here is a note when we use the Focus Node you have to dispose the focusnode *
   ///otherwise it will cause memory leak                                         *
   ///******************************************************************************
   final _priceFocusNode = FocusNode(); //setp1
   final _descriptionFocusNode = FocusNode();
+  final _imageUrlController = TextEditingController();
+  @override
+  void dispose() {
+    _priceFocusNode.dispose();
+    _descriptionFocusNode.dispose();
+    _imageUrlController.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -71,6 +80,45 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 // textInputAction: TextInputAction.next,
                 //user have to move to next fieldown hiss own because we can not tell
                 ///when user done with typying//
+              ),
+
+              //Now here I want to have image preview and text
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: <Widget>[
+                  Container(
+                    //this will show the image preview
+                    height: 100,
+                    width: 100,
+                    margin: const EdgeInsets.only(top: 8, right: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(width: 1, color: Colors.black),
+                    ),
+                    child: _imageUrlController.text.isEmpty
+                        ? Center(
+                            child: Text(
+                            'Please enter the url',
+                            textAlign: TextAlign.center,
+                          ))
+                        : FittedBox(
+                            child: Image.network(
+                              _imageUrlController.text,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                  ),
+                  Expanded(
+                    child: TextFormField(
+                      decoration: InputDecoration(
+                        labelText: 'Enter the ImageUrl',
+                      ),
+                      keyboardType: TextInputType.url,
+                      textInputAction: TextInputAction.done,
+                      controller:
+                          _imageUrlController, //i done this because i want the image before the form is submmited
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
