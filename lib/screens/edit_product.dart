@@ -65,6 +65,10 @@ class _EditProductScreenState extends State<EditProductScreen> {
     //this will save the data
     //here is the problem we to intreact with the form widget to get that data
     //so do so we need a key to intreact inside a code
+    final isValid=_form.currentState.validate(); //calling the validator
+    if(!isValid){ //if it has error value then it simply return
+      return;
+    }
     //step 3 of form key
     _form.currentState.save(); //this will save our form
     print(_editedProduct.title);
@@ -110,6 +114,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   FocusScope.of(context).requestFocus(
                       _priceFocusNode); //when the button is pressed we want that pricefocusnode to the next textfield
                 },
+                //to validate the input form takes the valedator argument 
+                      //it takes a function which retuns a string
+                      ///here i the note validator return a string 
+                      ///if you return null that means no error 
+                      ///if you retun a text that means error;
+                      ///for eg validator :(value){return 'this a wrong input';}//means error
+                      ///validator:(value){return null;} //no error
+                      validator: (value){
+                        //her i put my logic
+                        //after logic we have to triggred the validator we use the form key
+                        if(value.isEmpty){
+                          return 'Please provide a value';
+                        }
+                        return null;
+                      },
                 onSaved: (value) {
                   _editedProduct = Product(
                     id: null,
@@ -130,6 +149,21 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
                 },
+                validator: (value){
+                        //her i put my logic
+                        //after logic we have to triggred the validator we use the form key
+                        if(value.isEmpty){
+                          return 'Please provide a value';
+                        }
+                        if(double.tryParse(value)==null){
+                          //this will check if the value is number or not
+                          return 'Please enter the valid number';
+                        }
+                        if(double.parse(value)<=0){
+                          return 'Please enter a number greater then zero';
+                        }
+                        return null;
+                      },
                 onSaved: (value) {
                   _editedProduct = Product(
                     id: null,
@@ -150,6 +184,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 // textInputAction: TextInputAction.next,
                 //user have to move to next fieldown hiss own because we can not tell
                 ///when user done with typying//
+                validator: (value){
+                        //her i put my logic
+                        //after logic we have to triggred the validator we use the form key
+                        if(value.isEmpty){
+                          return 'Please provide a value';
+                        }
+                        if(value.length < 10){
+                          return 'Please enter atleast 10 characters long.';
+                        }
+                        return null;
+                      },
                 onSaved: (value) {
                   _editedProduct = Product(
                     id: null,
@@ -198,6 +243,17 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       focusNode: _imageUrlFocusNode,
                       onFieldSubmitted: (_) {
                         _saveForm();
+                      },
+                      validator: (value){
+                        //her i put my logic
+                        //after logic we have to triggred the validator we use the form key
+                        if(value.isEmpty){
+                          return 'Please provide a value';
+                        }
+                        if(!value.startsWith('http')&& !value.startsWith('https')){
+                          return 'Please enter valid url that start with http or https';
+                        }
+                        return null;
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
