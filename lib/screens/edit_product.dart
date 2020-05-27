@@ -6,6 +6,7 @@
 ///
 
 import 'package:flutter/material.dart';
+import 'package:shop_state/provider/product.dart';
 
 class EditProductScreen extends StatefulWidget {
   static const routeName = '/edit-screen';
@@ -25,23 +26,74 @@ class _EditProductScreenState extends State<EditProductScreen> {
   final _priceFocusNode = FocusNode(); //setp1
   final _descriptionFocusNode = FocusNode();
   final _imageUrlController = TextEditingController();
+  final _imageUrlFocusNode = FocusNode();
+  var _editedProduct = Product(
+    ///actually it is an empty product
+    id: null,
+    title: ' ',
+    description: '',
+    price: 0,
+    imageUrl: '',
+  );
+
+  //this is the step 1 for key
+  final _form = GlobalKey<
+      FormState>(); //here i creating a key by instancite the Global Key class
+  @override
+  void initState() {
+    _imageUrlFocusNode.addListener(_updateImageUrl);
+    super.initState();
+  }
+
   @override
   void dispose() {
+    _imageUrlFocusNode.removeListener(_updateImageUrl);
     _priceFocusNode.dispose();
     _descriptionFocusNode.dispose();
     _imageUrlController.dispose();
+    _imageUrlFocusNode.dispose();
     super.dispose();
   }
 
+  void _updateImageUrl() {
+    if (!_imageUrlFocusNode.hasFocus) {
+      setState(() {});
+    }
+  }
+
+  void _saveForm() {
+    //this will save the data
+    //here is the problem we to intreact with the form widget to get that data
+    //so do so we need a key to intreact inside a code
+    //step 3 of form key
+    _form.currentState.save(); //this will save our form
+    print(_editedProduct.title);
+    print(_editedProduct.description);
+    print(_editedProduct.price);
+    print(_editedProduct.imageUrl);
+  }
+
+  ///*********************************************************************************** */
+  ///*********************************************************************************** */
+  ///////****************************************************************************** */
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Edit Your Product'),
+
+        //Now i want to save my data afterthe form is filled
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: _saveForm,
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
+          key: _form, //step 2 assing the global key
           //using the form to get user input
           child: ListView(
             children: <Widget>[
@@ -58,6 +110,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                   FocusScope.of(context).requestFocus(
                       _priceFocusNode); //when the button is pressed we want that pricefocusnode to the next textfield
                 },
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: value,
+                    description: _editedProduct.description,
+                    price: _editedProduct.price,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
               TextFormField(
                 decoration: InputDecoration(
@@ -68,6 +129,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 focusNode: _priceFocusNode, //step 2
                 onFieldSubmitted: (_) {
                   FocusScope.of(context).requestFocus(_descriptionFocusNode);
+                },
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: _editedProduct.title,
+                    description: _editedProduct.description,
+                    price: double.parse(value),
+                    imageUrl: _editedProduct.imageUrl,
+                  );
                 },
               ),
               TextFormField(
@@ -80,6 +150,15 @@ class _EditProductScreenState extends State<EditProductScreen> {
                 // textInputAction: TextInputAction.next,
                 //user have to move to next fieldown hiss own because we can not tell
                 ///when user done with typying//
+                onSaved: (value) {
+                  _editedProduct = Product(
+                    id: null,
+                    title: _editedProduct.title,
+                    description: value,
+                    price: _editedProduct.price,
+                    imageUrl: _editedProduct.imageUrl,
+                  );
+                },
               ),
 
               //Now here I want to have image preview and text
@@ -116,6 +195,19 @@ class _EditProductScreenState extends State<EditProductScreen> {
                       textInputAction: TextInputAction.done,
                       controller:
                           _imageUrlController, //i done this because i want the image before the form is submmited
+                      focusNode: _imageUrlFocusNode,
+                      onFieldSubmitted: (_) {
+                        _saveForm();
+                      },
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                          id: null,
+                          title: _editedProduct.title,
+                          description: _editedProduct.description,
+                          price: _editedProduct.price,
+                          imageUrl: value,
+                        );
+                      },
                     ),
                   ),
                 ],
