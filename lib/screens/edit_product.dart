@@ -43,6 +43,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
       'description':'',
       'imageUrl':'',
   };
+  var _isLoading=false;
   var _isInit = true; //this variable is used for did change dependencies
   //this is the step 1 for key
   final _form = GlobalKey<
@@ -99,14 +100,26 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (!isValid) {
       return;
     }
+    setState(() {
+      _isLoading=true;
+    });
     _form.currentState.save();
     if (_editedProduct.id != null) {
       Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
+          setState(() {
+      _isLoading=false;
+          });
+            Navigator.of(context).pop();//
     } else {
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct).then((_) {
+         setState(() {
+      _isLoading=false;
+    });
+          Navigator.of(context).pop();
+      });
     }
-    Navigator.of(context).pop();
+  
   }
 
   ///*********************************************************************************** */
@@ -126,7 +139,7 @@ class _EditProductScreenState extends State<EditProductScreen> {
           )
         ],
       ),
-      body: Padding(
+      body: _isLoading?Center(child: CircularProgressIndicator(backgroundColor: Colors.deepPurple,),):Padding(
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _form, //step 2 assing the global key

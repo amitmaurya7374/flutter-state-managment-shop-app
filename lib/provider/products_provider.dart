@@ -77,7 +77,7 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  void addProduct(Product product) {
+ Future<void> addProduct(Product product) {
     ///Notes
     ///************************************************************************* */
     ///firebase need this url to make commnication                               * 
@@ -90,25 +90,33 @@ class Products with ChangeNotifier {
     //we use body name argument to convert ourdata in json format 
     //because webserver only understand json
 
-    http.post(url,body:json.encode({
+   return http.post(url,body:json.encode({
+      //this post method return a future 
       //i want to store product
+      //actually future allows us to define a function that should execute in the future
       'title':product.title,
       'description':product.description,
       'imageUrl':product.imageUrl,
       'price':product.price,
       'isFavorite':product.isFavorite,
-    }));
-    final newProduct = Product(
+    })).then(
+      //this will execute when the post method complete it action and return the response
+      //this function only run when we have a response fron the post method
+      (response) {
+        print(json.decode(response.body));
+        final newProduct = Product(
       title: product.title,
       description: product.description,
       price: product.price,
       imageUrl: product.imageUrl,
-      id: DateTime.now().toString(),
+      id: json.decode(response.body)['name'],
       // _items.add(newProduct);
     );
     _items.add(newProduct);
     // _items.add(value);
     notifyListeners();
+      },);
+    
   }
 
   void updateProduct(String id, Product newProduct) {
