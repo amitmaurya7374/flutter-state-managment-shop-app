@@ -94,22 +94,18 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-  void _saveForm() {
-    //this will save the data
-    //here is the problem we to intreact with the form widget to get that data
-    //so do so we need a key to intreact inside a code
-    final isValid=_form.currentState.validate(); //calling the validator
-    if(!isValid){ //if it has error value then it simply return
+   void _saveForm() {
+    final isValid = _form.currentState.validate();
+    if (!isValid) {
       return;
     }
-    //step 3 of form key
-    _form.currentState.save(); //this will save our form
-    if(_editedProduct != null){
-       Provider.of<Products>(context,listen: false).updateProduct(_editedProduct.id,_editedProduct);
-    }else{
-      Provider.of<Products>(context,listen: false).addProduct(_editedProduct);
+    _form.currentState.save();
+    if (_editedProduct.id != null) {
+      Provider.of<Products>(context, listen: false)
+          .updateProduct(_editedProduct.id, _editedProduct);
+    } else {
+      Provider.of<Products>(context, listen: false).addProduct(_editedProduct);
     }
-    
     Navigator.of(context).pop();
   }
 

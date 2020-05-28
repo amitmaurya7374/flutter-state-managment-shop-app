@@ -2,7 +2,7 @@
 //this is a globle data center
 import 'package:flutter/widgets.dart';
 import 'product.dart';
-
+import 'package:http/http.dart' as http; //to avoid any name clash http.
 //this class is for multiple products with a mixin called changeNotifier
 class Products with ChangeNotifier {
 //here i am defining the list of products
@@ -77,6 +77,13 @@ class Products with ChangeNotifier {
   }
 
   void addProduct(Product product) {
+    ///Notes
+    ///************************************************************************* */
+    ///firebase need this url to make commnication                               * 
+    ////products => means this create a folder in a data base name products      * 
+    ///firebase url always end with .json extension                              *
+    ///************************************************************************* */
+    const url ='https://shopping-app-45175.firebaseio.com/products.json';
     final newProduct = Product(
       title: product.title,
       description: product.description,
