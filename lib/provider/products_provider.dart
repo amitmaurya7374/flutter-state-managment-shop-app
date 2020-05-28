@@ -3,6 +3,7 @@
 import 'package:flutter/widgets.dart';
 import 'product.dart';
 import 'package:http/http.dart' as http; //to avoid any name clash http.
+import 'dart:convert';//this libary help to convert our data into a json format
 //this class is for multiple products with a mixin called changeNotifier
 class Products with ChangeNotifier {
 //here i am defining the list of products
@@ -82,8 +83,21 @@ class Products with ChangeNotifier {
     ///firebase need this url to make commnication                               * 
     ////products => means this create a folder in a data base name products      * 
     ///firebase url always end with .json extension                              *
+    ///json data look like a map in dart                                         *
     ///************************************************************************* */
     const url ='https://shopping-app-45175.firebaseio.com/products.json';
+    //here i storing a data
+    //we use body name argument to convert ourdata in json format 
+    //because webserver only understand json
+
+    http.post(url,body:json.encode({
+      //i want to store product
+      'title':product.title,
+      'description':product.description,
+      'imageUrl':product.imageUrl,
+      'price':product.price,
+      'isFavorite':product.isFavorite,
+    }));
     final newProduct = Product(
       title: product.title,
       description: product.description,
