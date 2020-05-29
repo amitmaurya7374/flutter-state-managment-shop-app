@@ -22,6 +22,7 @@ class ProductsOverviewScreen extends StatefulWidget {
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showOnlyFavorite = false;
   var _isInit=true;
+  var _isLoading=false;
   //here i am fetching the data from  the database
   @override
   void initState() {
@@ -33,7 +34,12 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
 @override
   void didChangeDependencies() {
     if(_isInit){
-      Provider.of<Products>(context).fetchAndSetProducts();
+      setState(() {
+        _isLoading=true;
+      });
+      Provider.of<Products>(context).fetchAndSetProducts().then((_) {
+        _isLoading = false;
+      });
     }
     _isInit=false;
     super.didChangeDependencies();
@@ -93,7 +99,7 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
       ),
       //here i used my AppDrawer which i built
       drawer: AppDrawer(),
-      body: ProductsGrid(_showOnlyFavorite),
+      body:_isLoading?  Center(child: CircularProgressIndicator(backgroundColor: Colors.deepPurple,),):ProductsGrid(_showOnlyFavorite),
     );
   }
 }
