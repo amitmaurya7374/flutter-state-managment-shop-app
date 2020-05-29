@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_state/provider/cart.dart';
+import 'package:shop_state/provider/products_provider.dart';
 import 'package:shop_state/screens/cart_screen.dart';
 import 'package:shop_state/widget/app_drawer.dart';
 import 'package:shop_state/widget/badge.dart';
@@ -20,6 +21,23 @@ class ProductsOverviewScreen extends StatefulWidget {
 
 class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
   var _showOnlyFavorite = false;
+  var _isInit=true;
+  //here i am fetching the data from  the database
+  @override
+  void initState() {
+    // Provider.of<Products>(context,listen: false).fetchAndSetProducts();//this will not work unless u set listen to flase
+    // Future.delayed(Duration.zero).then((_) =>
+    //     Provider.of<Products>(context, listen: false).fetchAndSetProducts());
+    super.initState();
+  }
+@override
+  void didChangeDependencies() {
+    if(_isInit){
+      Provider.of<Products>(context).fetchAndSetProducts();
+    }
+    _isInit=false;
+    super.didChangeDependencies();
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,15 +78,16 @@ class _ProductsOverviewScreenState extends State<ProductsOverviewScreen> {
             ],
           ),
           Consumer<Cart>(
-            builder: (_, cart, child) =>Badge(
-                child:child ,
-                value: cart.itemCount.toString(),),
-                child: IconButton(
-                  icon: Icon(Icons.shopping_cart),
-                  onPressed: (){
-                    Navigator.of(context).pushNamed(CartScreen.routeName);
-                  },
-                ),
+            builder: (_, cart, child) => Badge(
+              child: child,
+              value: cart.itemCount.toString(),
+            ),
+            child: IconButton(
+              icon: Icon(Icons.shopping_cart),
+              onPressed: () {
+                Navigator.of(context).pushNamed(CartScreen.routeName);
+              },
+            ),
           )
         ],
       ),
