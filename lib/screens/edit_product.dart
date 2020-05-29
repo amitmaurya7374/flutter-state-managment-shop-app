@@ -101,46 +101,45 @@ class _EditProductScreenState extends State<EditProductScreen> {
     if (!isValid) {
       return;
     }
+    _form.currentState.save();
     setState(() {
       _isLoading = true;
     });
-    _form.currentState.save();
     if (_editedProduct.id != null) {
       Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
       setState(() {
         _isLoading = false;
       });
-      Navigator.of(context).pop(); //
+      Navigator.of(context).pop();
     } else {
       try {
         await Provider.of<Products>(context, listen: false)
-            .addProduct(_editedProduct); //this yells a future
-
+            .addProduct(_editedProduct);
       } catch (error) {
-      await  showDialog<Null>(//wait for user to press button
+        await showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
-            title: Text('An error Occurred'),
-            content: Text('Something went wrong'),
-            actions: <Widget>[
-              RaisedButton(
-                child: Text('OK'),
-                onPressed: () {
-                  Navigator.of(ctx).pop();
-                },
+                title: Text('An error occurred!'),
+                content: Text('Something went wrong.'),
+                actions: <Widget>[
+                  FlatButton(
+                    child: Text('Okay'),
+                    onPressed: () {
+                      Navigator.of(ctx).pop();
+                    },
+                  )
+                ],
               ),
-            ],
-          ),
         );
       } finally {
-        //thisa then part 
         setState(() {
           _isLoading = false;
         });
         Navigator.of(context).pop();
       }
     }
+    // Navigator.of(context).pop();
   }
 
   ///*********************************************************************************** */
