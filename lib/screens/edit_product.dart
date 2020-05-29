@@ -37,13 +37,13 @@ class _EditProductScreenState extends State<EditProductScreen> {
     price: 0,
     imageUrl: '',
   );
-  var _initValues={
-    'title':'',
-    'price':'',
-      'description':'',
-      'imageUrl':'',
+  var _initValues = {
+    'title': '',
+    'price': '',
+    'description': '',
+    'imageUrl': '',
   };
-  var _isLoading=false;
+  var _isLoading = false;
   var _isInit = true; //this variable is used for did change dependencies
   //this is the step 1 for key
   final _form = GlobalKey<
@@ -54,31 +54,32 @@ class _EditProductScreenState extends State<EditProductScreen> {
     super.initState();
   }
 
-@override
+  @override
   void didChangeDependencies() {
-    //this method run so many time in Build method 
+    //this method run so many time in Build method
     ///so to stop that i initialize a variablle isInit first true then  initialize it false
-  if(_isInit){
-    //getting the data fro Navigator as an argument ;
-    final productId =ModalRoute.of(context).settings.arguments as String ;
-    if(productId!=null){
-    final product=Provider.of<Products>(context,listen: false).findById(productId);
-    _editedProduct= product;
-    _initValues = {
-      'title':_editedProduct.title,
-      'price':_editedProduct.price.toString(),
-      'description':_editedProduct.description,
-      // 'imageUrl':_editedProduct.imageUrl
-      'imageUrl':'',
-      };
-      _imageUrlController.text =_editedProduct.imageUrl;
-  }
-    
-  }
-  _isInit=false;
+    if (_isInit) {
+      //getting the data fro Navigator as an argument ;
+      final productId = ModalRoute.of(context).settings.arguments as String;
+      if (productId != null) {
+        final product =
+            Provider.of<Products>(context, listen: false).findById(productId);
+        _editedProduct = product;
+        _initValues = {
+          'title': _editedProduct.title,
+          'price': _editedProduct.price.toString(),
+          'description': _editedProduct.description,
+          // 'imageUrl':_editedProduct.imageUrl
+          'imageUrl': '',
+        };
+        _imageUrlController.text = _editedProduct.imageUrl;
+      }
+    }
+    _isInit = false;
 
     super.didChangeDependencies();
   }
+
   @override
   void dispose() {
     _imageUrlFocusNode.removeListener(_updateImageUrl);
@@ -95,31 +96,51 @@ class _EditProductScreenState extends State<EditProductScreen> {
     }
   }
 
-   void _saveForm() {
+  Future<void> _saveForm() async {
     final isValid = _form.currentState.validate();
     if (!isValid) {
       return;
     }
     setState(() {
-      _isLoading=true;
+      _isLoading = true;
     });
     _form.currentState.save();
     if (_editedProduct.id != null) {
       Provider.of<Products>(context, listen: false)
           .updateProduct(_editedProduct.id, _editedProduct);
-          setState(() {
-      _isLoading=false;
-          });
-            Navigator.of(context).pop();//
-    } else {
-      Provider.of<Products>(context, listen: false).addProduct(_editedProduct).then((_) {
-         setState(() {
-      _isLoading=false;
-    });
-          Navigator.of(context).pop();
+      setState(() {
+        _isLoading = false;
       });
+      Navigator.of(context).pop(); //
+    } else {
+      try {
+        await Provider.of<Products>(context, listen: false)
+            .addProduct(_editedProduct); //this yells a future
+
+      } catch (error) {
+      await  showDialog<Null>(//wait for user to press button
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text('An error Occurred'),
+            content: Text('Something went wrong'),
+            actions: <Widget>[
+              RaisedButton(
+                child: Text('OK'),
+                onPressed: () {
+                  Navigator.of(ctx).pop();
+                },
+              ),
+            ],
+          ),
+        );
+      } finally {
+        //thisa then part 
+        setState(() {
+          _isLoading = false;
+        });
+        Navigator.of(context).pop();
+      }
     }
-  
   }
 
   ///*********************************************************************************** */
@@ -139,192 +160,200 @@ class _EditProductScreenState extends State<EditProductScreen> {
           )
         ],
       ),
-      body: _isLoading?Center(child: CircularProgressIndicator(backgroundColor: Colors.deepPurple,),):Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _form, //step 2 assing the global key
-          //using the form to get user input
-          child: ListView(
-            children: <Widget>[
-              TextFormField(
-                initialValue: _initValues['title'],
-                //decoration is used for how your textfield look like
-                decoration: InputDecoration(
-                  labelText: 'Title',
-                ),
-                //textInputAction :it show how your keyword should look like when user tap on that textfield
-                textInputAction: TextInputAction
-                    .next, //it will show the enter button on the keyboard
-                //setp3
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(
-                      _priceFocusNode); //when the button is pressed we want that pricefocusnode to the next textfield
-                },
-                //to validate the input form takes the valedator argument 
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(
+                backgroundColor: Colors.deepPurple,
+              ),
+            )
+          : Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Form(
+                key: _form, //step 2 assing the global key
+                //using the form to get user input
+                child: ListView(
+                  children: <Widget>[
+                    TextFormField(
+                      initialValue: _initValues['title'],
+                      //decoration is used for how your textfield look like
+                      decoration: InputDecoration(
+                        labelText: 'Title',
+                      ),
+                      //textInputAction :it show how your keyword should look like when user tap on that textfield
+                      textInputAction: TextInputAction
+                          .next, //it will show the enter button on the keyboard
+                      //setp3
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context).requestFocus(
+                            _priceFocusNode); //when the button is pressed we want that pricefocusnode to the next textfield
+                      },
+                      //to validate the input form takes the valedator argument
                       //it takes a function which retuns a string
-                      ///here i the note validator return a string 
-                      ///if you return null that means no error 
+                      ///here i the note validator return a string
+                      ///if you return null that means no error
                       ///if you retun a text that means error;
                       ///for eg validator :(value){return 'this a wrong input';}//means error
                       ///validator:(value){return null;} //no error
-                      validator: (value){
+                      validator: (value) {
                         //her i put my logic
                         //after logic we have to triggred the validator we use the form key
-                        if(value.isEmpty){
+                        if (value.isEmpty) {
                           return 'Please provide a value';
-                        }
-                        return null;
-                      },
-                onSaved: (value) {
-                  _editedProduct = Product(
-                    id: _editedProduct.id,
-                    isFavorite: _editedProduct.isFavorite,
-                    title: value,
-                    description: _editedProduct.description,
-                    price: _editedProduct.price,
-                    imageUrl: _editedProduct.imageUrl,
-                  );
-                },
-              ),
-              TextFormField(
-                initialValue: _initValues['price'],
-                decoration: InputDecoration(
-                  labelText: 'Price',
-                ),
-                textInputAction: TextInputAction.next,
-                keyboardType: TextInputType.number,
-                focusNode: _priceFocusNode, //step 2
-                onFieldSubmitted: (_) {
-                  FocusScope.of(context).requestFocus(_descriptionFocusNode);
-                },
-                validator: (value){
-                        //her i put my logic
-                        //after logic we have to triggred the validator we use the form key
-                        if(value.isEmpty){
-                          return 'Please provide a value';
-                        }
-                        if(double.tryParse(value)==null){
-                          //this will check if the value is number or not
-                          return 'Please enter the valid number';
-                        }
-                        if(double.parse(value)<=0){
-                          return 'Please enter a number greater then zero';
-                        }
-                        return null;
-                      },
-                onSaved: (value) {
-                  _editedProduct = Product(
-                     id: _editedProduct.id,
-                    isFavorite: _editedProduct.isFavorite,
-                    title: _editedProduct.title,
-                    description: _editedProduct.description,
-                    price: double.parse(value),
-                    imageUrl: _editedProduct.imageUrl,
-                  );
-                },
-              ),
-              TextFormField(
-                initialValue: _initValues['description'],
-                decoration: InputDecoration(
-                  labelText: 'Description',
-                ),
-                maxLines: 3,
-                keyboardType: TextInputType.multiline,
-                focusNode: _descriptionFocusNode,
-                // textInputAction: TextInputAction.next,
-                //user have to move to next fieldown hiss own because we can not tell
-                ///when user done with typying//
-                validator: (value){
-                        //her i put my logic
-                        //after logic we have to triggred the validator we use the form key
-                        if(value.isEmpty){
-                          return 'Please provide a value';
-                        }
-                        if(value.length < 10){
-                          return 'Please enter atleast 10 characters long.';
-                        }
-                        return null;
-                      },
-                onSaved: (value) {
-                  _editedProduct = Product(
-                    id: _editedProduct.id,
-                    isFavorite: _editedProduct.isFavorite,
-                    title: _editedProduct.title,
-                    description: value,
-                    price: _editedProduct.price,
-                    imageUrl: _editedProduct.imageUrl,
-                  );
-                },
-              ),
-
-              //Now here I want to have image preview and text
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: <Widget>[
-                  Container(
-                    //this will show the image preview
-                    height: 100,
-                    width: 100,
-                    margin: const EdgeInsets.only(top: 8, right: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(width: 1, color: Colors.black),
-                    ),
-                    child: _imageUrlController.text.isEmpty
-                        ? Center(
-                            child: Text(
-                            'Please enter the url',
-                            textAlign: TextAlign.center,
-                          ))
-                        : FittedBox(
-                            child: Image.network(
-                              _imageUrlController.text,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                  ),
-                  Expanded(
-                    child: TextFormField(
-                      // initialValue: _initValues['imageUrl'],
-                      decoration: InputDecoration(
-                        labelText: 'Enter the ImageUrl',
-                      ),
-                      keyboardType: TextInputType.url,
-                      textInputAction: TextInputAction.done,
-                      controller:
-                          _imageUrlController, //i done this because i want the image before the form is submmited
-                      focusNode: _imageUrlFocusNode,
-                      onFieldSubmitted: (_) {
-                        _saveForm();
-                      },
-                      validator: (value){
-                        //her i put my logic
-                        //after logic we have to triggred the validator we use the form key
-                        if(value.isEmpty){
-                          return 'Please provide a value';
-                        }
-                        if(!value.startsWith('http')&& !value.startsWith('https')){
-                          return 'Please enter valid url that start with http or https';
                         }
                         return null;
                       },
                       onSaved: (value) {
                         _editedProduct = Product(
-                           id: _editedProduct.id,
-                    isFavorite: _editedProduct.isFavorite,
-                          title: _editedProduct.title,
+                          id: _editedProduct.id,
+                          isFavorite: _editedProduct.isFavorite,
+                          title: value,
                           description: _editedProduct.description,
                           price: _editedProduct.price,
-                          imageUrl: value,
+                          imageUrl: _editedProduct.imageUrl,
                         );
                       },
                     ),
-                  ),
-                ],
+                    TextFormField(
+                      initialValue: _initValues['price'],
+                      decoration: InputDecoration(
+                        labelText: 'Price',
+                      ),
+                      textInputAction: TextInputAction.next,
+                      keyboardType: TextInputType.number,
+                      focusNode: _priceFocusNode, //step 2
+                      onFieldSubmitted: (_) {
+                        FocusScope.of(context)
+                            .requestFocus(_descriptionFocusNode);
+                      },
+                      validator: (value) {
+                        //her i put my logic
+                        //after logic we have to triggred the validator we use the form key
+                        if (value.isEmpty) {
+                          return 'Please provide a value';
+                        }
+                        if (double.tryParse(value) == null) {
+                          //this will check if the value is number or not
+                          return 'Please enter the valid number';
+                        }
+                        if (double.parse(value) <= 0) {
+                          return 'Please enter a number greater then zero';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                          id: _editedProduct.id,
+                          isFavorite: _editedProduct.isFavorite,
+                          title: _editedProduct.title,
+                          description: _editedProduct.description,
+                          price: double.parse(value),
+                          imageUrl: _editedProduct.imageUrl,
+                        );
+                      },
+                    ),
+                    TextFormField(
+                      initialValue: _initValues['description'],
+                      decoration: InputDecoration(
+                        labelText: 'Description',
+                      ),
+                      maxLines: 3,
+                      keyboardType: TextInputType.multiline,
+                      focusNode: _descriptionFocusNode,
+                      // textInputAction: TextInputAction.next,
+                      //user have to move to next fieldown hiss own because we can not tell
+                      ///when user done with typying//
+                      validator: (value) {
+                        //her i put my logic
+                        //after logic we have to triggred the validator we use the form key
+                        if (value.isEmpty) {
+                          return 'Please provide a value';
+                        }
+                        if (value.length < 10) {
+                          return 'Please enter atleast 10 characters long.';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) {
+                        _editedProduct = Product(
+                          id: _editedProduct.id,
+                          isFavorite: _editedProduct.isFavorite,
+                          title: _editedProduct.title,
+                          description: value,
+                          price: _editedProduct.price,
+                          imageUrl: _editedProduct.imageUrl,
+                        );
+                      },
+                    ),
+
+                    //Now here I want to have image preview and text
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: <Widget>[
+                        Container(
+                          //this will show the image preview
+                          height: 100,
+                          width: 100,
+                          margin: const EdgeInsets.only(top: 8, right: 10),
+                          decoration: BoxDecoration(
+                            border: Border.all(width: 1, color: Colors.black),
+                          ),
+                          child: _imageUrlController.text.isEmpty
+                              ? Center(
+                                  child: Text(
+                                  'Please enter the url',
+                                  textAlign: TextAlign.center,
+                                ))
+                              : FittedBox(
+                                  child: Image.network(
+                                    _imageUrlController.text,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                        ),
+                        Expanded(
+                          child: TextFormField(
+                            // initialValue: _initValues['imageUrl'],
+                            decoration: InputDecoration(
+                              labelText: 'Enter the ImageUrl',
+                            ),
+                            keyboardType: TextInputType.url,
+                            textInputAction: TextInputAction.done,
+                            controller:
+                                _imageUrlController, //i done this because i want the image before the form is submmited
+                            focusNode: _imageUrlFocusNode,
+                            onFieldSubmitted: (_) {
+                              _saveForm();
+                            },
+                            validator: (value) {
+                              //her i put my logic
+                              //after logic we have to triggred the validator we use the form key
+                              if (value.isEmpty) {
+                                return 'Please provide a value';
+                              }
+                              if (!value.startsWith('http') &&
+                                  !value.startsWith('https')) {
+                                return 'Please enter valid url that start with http or https';
+                              }
+                              return null;
+                            },
+                            onSaved: (value) {
+                              _editedProduct = Product(
+                                id: _editedProduct.id,
+                                isFavorite: _editedProduct.isFavorite,
+                                title: _editedProduct.title,
+                                description: _editedProduct.description,
+                                price: _editedProduct.price,
+                                imageUrl: value,
+                              );
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 }

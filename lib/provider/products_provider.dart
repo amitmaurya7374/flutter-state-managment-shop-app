@@ -3,7 +3,8 @@
 import 'package:flutter/widgets.dart';
 import 'product.dart';
 import 'package:http/http.dart' as http; //to avoid any name clash http.
-import 'dart:convert';//this libary help to convert our data into a json format
+import 'dart:convert'; //this libary help to convert our data into a json format
+
 //this class is for multiple products with a mixin called changeNotifier
 class Products with ChangeNotifier {
 //here i am defining the list of products
@@ -77,46 +78,63 @@ class Products with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
- Future<void> addProduct(Product product) {
+// by adding the async keyword all the code you have automatically get wrapped
+//into a future.therefore we do not need to return the future it automatically did that
+  Future<void> addProduct(Product product) async {
     ///Notes
     ///************************************************************************* */
-    ///firebase need this url to make commnication                               * 
-    ////products => means this create a folder in a data base name products      * 
+    ///firebase need this url to make commnication                               *
+    ////products => means this create a folder in a data base name products      *
     ///firebase url always end with .json extension                              *
     ///json data look like a map in dart                                         *
     ///************************************************************************* */
-    const url ='https://shopping-app-45175.firebaseio.com/products.json';
-    //here i storing a data
-    //we use body name argument to convert ourdata in json format 
+    const url = 'https://shopping-app-45175.firebaseio.com/products.json';
+    //here i storing a dataon
+    //we use body name argument to convert ourdata in json format
     //because webserver only understand json
+    ///await => this tell dart that we want to wait this operation to
+    ///finish before we move on to the next line in our dart code
+    ///and we donot need of then block
+    ///
+    ///
+    try {
+      final response = await http.post(
+        url,
+        body: json.encode(
+          {
+            //this post method return a future
+            //i want to store product
+            //actually future allows us to define a function that should execute in the future
+            'title': product.title,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'price': product.price,
+            'isFavorite': product.isFavorite,
+          },
+        ),
+      );
+      //after the post method get completlyy execute this will run
+      print(json.decode(response.body));
+      final newProduct = Product(
+        title: product.title,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        id: json.decode(response.body)['name'],
+        // _items.add(newProduct);
+      );
+      _items.add(newProduct);
+      // _items.add(value);
+      notifyListeners();
+    } catch (error) {
+      print(error);
+      throw (error); //throw will help you to throw a new error that can be handle on other
+    }
 
-   return http.post(url,body:json.encode({
-      //this post method return a future 
-      //i want to store product
-      //actually future allows us to define a function that should execute in the future
-      'title':product.title,
-      'description':product.description,
-      'imageUrl':product.imageUrl,
-      'price':product.price,
-      'isFavorite':product.isFavorite,
-    })).then(
-      //this will execute when the post method complete it action and return the response
-      //this function only run when we have a response fron the post method
-      (response) {
-        print(json.decode(response.body));
-        final newProduct = Product(
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      imageUrl: product.imageUrl,
-      id: json.decode(response.body)['name'],
-      // _items.add(newProduct);
-    );
-    _items.add(newProduct);
-    // _items.add(value);
-    notifyListeners();
-      },);
-    
+    //this catch error help you to handle error
+    // print(error);
+    // throw (error); //throw will help you to throw a new error that can be handle on other
+    //place.
   }
 
   void updateProduct(String id, Product newProduct) {
@@ -129,8 +147,8 @@ class Products with ChangeNotifier {
     }
   }
 
-  void deleteProduct(String id){
-    _items.removeWhere((prod) => prod.id==id);
+  void deleteProduct(String id) {
+    _items.removeWhere((prod) => prod.id == id);
     notifyListeners();
   }
 }
