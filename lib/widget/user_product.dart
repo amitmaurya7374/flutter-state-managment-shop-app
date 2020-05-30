@@ -15,10 +15,11 @@ class UserProductItem extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
+    final scafflod = Scaffold.of(context);
     return Card(
       elevation: 10.0,
-        margin: const EdgeInsets.all(10.0),
-          child: ListTile(
+      margin: const EdgeInsets.all(10.0),
+      child: ListTile(
         title: Text(title),
         leading: CircleAvatar(
           backgroundImage: NetworkImage(imageUrl),
@@ -31,14 +32,24 @@ class UserProductItem extends StatelessWidget {
                 color: Colors.deepPurple,
                 icon: Icon(Icons.edit),
                 onPressed: () {
-                  Navigator.of(context).pushNamed(EditProductScreen.routeName,arguments:id );
+                  Navigator.of(context)
+                      .pushNamed(EditProductScreen.routeName, arguments: id);
                 },
               ),
               IconButton(
                 color: Colors.red,
                 icon: Icon(Icons.delete),
-                onPressed: () {
-                  Provider.of<Products>(context,listen: false).deleteProduct(id);
+                onPressed: () async {
+                  try {
+                    await Provider.of<Products>(context, listen: false)
+                        .deleteProduct(id);
+                  } catch (error) {
+                   scafflod.showSnackBar(
+                      SnackBar(
+                        content: Text('Deleting failed'),
+                      ),
+                    );
+                  }
                 },
               ),
             ],
