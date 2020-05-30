@@ -41,25 +41,7 @@ class CartScreen extends StatelessWidget {
                     elevation: 6.0,
                     backgroundColor: Theme.of(context).primaryColor,
                   ),
-                  RaisedButton(
-                    elevation: 10.0,
-                    onPressed: () {
-                      Provider.of<Orders>(context,listen: false).addOrder(
-                          cart.items.values.toList(), cart.totalAmount);
-                        cart.clearCart();  
-                        // Navigator.of(context).pushNamed(OrderScreen.routeName);
-                    },
-                    child: Text(
-                      'Order Now',
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    color: Colors.purple,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        20.0,
-                      ),
-                    ),
-                  ),
+                  OrderButton(cart: cart),
                 ],
               ),
             ),
@@ -83,6 +65,62 @@ class CartScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class OrderButton extends StatefulWidget {
+  const OrderButton({
+    Key key,
+    @required this.cart,
+  }) : super(key: key);
+
+  final Cart cart;
+
+  @override
+  _OrderButtonState createState() => _OrderButtonState();
+}
+
+class _OrderButtonState extends State<OrderButton> {
+  var _isLoading = false;
+  @override
+  Widget build(BuildContext context) {
+    return RaisedButton(
+      elevation: 10.0,
+      onPressed: (widget.cart.totalAmount <= 0 || _isLoading)
+          ? null
+          : () async {
+              setState(() {
+                _isLoading = true;
+              });
+              await Provider.of<Orders>(context, listen: false).addOrder(
+                  widget.cart.items.values.toList(), widget.cart.totalAmount);
+              setState(() {
+                _isLoading = false;
+              });
+              widget.cart.clearCart();
+              // Navigator.of(context).pushNamed(OrderScreen.routeName);
+            },
+      child: _isLoading
+          ? Center(
+              child: Container(
+                height: 25,
+                width: 25,
+                child: CircularProgressIndicator(
+                  backgroundColor: Colors.deepPurple,
+                ),
+              ),
+            )
+          : Text(
+              'Order Now',
+              style: TextStyle(color: Colors.white),
+            ),
+      color: Colors.purple,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(
+          20.0,
+        ),
       ),
     );
   }
